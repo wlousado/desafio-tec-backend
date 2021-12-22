@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "api.cpf-validation.url",
+      "type": "java.lang.String",
+      "description": "Description for api.cpf-validation.url."
+  }
+] }

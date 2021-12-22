@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  mongodb:
+    image: mongo:4.4.6
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: desafio
+      MONGO_INITDB_ROOT_PASSWORD: desafiotec
+      MONGO_INITDB_DATABASE: desafiodb
+  zookeeper-service:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+  kafka-service:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-service:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-service:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper-service
+  schema-registry:
+    image: confluentinc/cp-schema-registry:6.2.1
+    depends_on:
+      - kafka-service
+    ports:
+      - 8081:8081
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka-service:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+  app:
+    build: ./
+    ports:
+      - 9042:9042
+    depends_on:
+      - kafka-service

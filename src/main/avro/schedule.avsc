@@ -1,0 +1,17 @@
+{"namespace": "br.com.sicred.model.kafka.model",
+  "type": "record",
+  "name": "ScheduleResultAvro",
+  "fields": [
+    {"name": "idSchedule", "type": "string"},
+    {"name": "voteSim", "type": "int"},
+    {"name": "voteNao", "type": "int"},
+    {
+      "name": "result",
+      "type": {
+        "name": "ResultEnum",
+        "type": "enum",
+        "symbols": ["APROVED", "REPROVED", "TIE"]
+      }
+    }
+  ]
+}
